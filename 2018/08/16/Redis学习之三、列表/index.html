@@ -79,18 +79,20 @@
 
 
 
-<meta name="description" content="一、简介&amp;emsp;&amp;emsp;随着互联网的发展，网络逐渐普及整个社会，能够接触网络上网的人员也越来越多。各个互联网公司的用户量也在日益增长，以前关系型数据库能满足公司的需求，但是慢慢的随着用户量的增长，数据搜索的速度变得越来越慢，这时候就出现了基于内存存储的非关系型数据库。比如Redis、memcache、MongoDB等。&amp;emsp;&amp;emsp;Redis是一个远程内存数据库，它不仅性能高效而">
+<meta name="description" content="一、概述&amp;emsp;&amp;emsp;Redis对链表的存储支持使得Redis本身在key-value存储中成为特别的一员。一个列表可以有序的存储多个字符串，其中可以是数值型的字符串也可以是纯正型的字符串。以下是存储示例： 二、简单命令以及使用Redis对于列表操作的命令和JAVA中的双端队列很相似，对于每一个列表可以从表头开始操作也可以从表尾开始操作，具体的命令可以看下面一张表格：    命令 使用格">
 <meta name="keywords" content="Redis">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Redis探索之一、初识Redis">
-<meta property="og:url" content="https://faithchild.github.io/2018/08/14/Redis探索之一、初识Redis/index.html">
+<meta property="og:title" content="Redis探索之三、列表">
+<meta property="og:url" content="https://faithchild.github.io/2018/08/16/Redis学习之三、列表/index.html">
 <meta property="og:site_name" content="小杰的博客">
-<meta property="og:description" content="一、简介&amp;emsp;&amp;emsp;随着互联网的发展，网络逐渐普及整个社会，能够接触网络上网的人员也越来越多。各个互联网公司的用户量也在日益增长，以前关系型数据库能满足公司的需求，但是慢慢的随着用户量的增长，数据搜索的速度变得越来越慢，这时候就出现了基于内存存储的非关系型数据库。比如Redis、memcache、MongoDB等。&amp;emsp;&amp;emsp;Redis是一个远程内存数据库，它不仅性能高效而">
+<meta property="og:description" content="一、概述&amp;emsp;&amp;emsp;Redis对链表的存储支持使得Redis本身在key-value存储中成为特别的一员。一个列表可以有序的存储多个字符串，其中可以是数值型的字符串也可以是纯正型的字符串。以下是存储示例： 二、简单命令以及使用Redis对于列表操作的命令和JAVA中的双端队列很相似，对于每一个列表可以从表头开始操作也可以从表尾开始操作，具体的命令可以看下面一张表格：    命令 使用格">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-08-16T06:13:27.766Z">
+<meta property="og:image" content="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-16/34636993.jpg">
+<meta property="og:updated_time" content="2018-08-16T09:46:50.856Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Redis探索之一、初识Redis">
-<meta name="twitter:description" content="一、简介&amp;emsp;&amp;emsp;随着互联网的发展，网络逐渐普及整个社会，能够接触网络上网的人员也越来越多。各个互联网公司的用户量也在日益增长，以前关系型数据库能满足公司的需求，但是慢慢的随着用户量的增长，数据搜索的速度变得越来越慢，这时候就出现了基于内存存储的非关系型数据库。比如Redis、memcache、MongoDB等。&amp;emsp;&amp;emsp;Redis是一个远程内存数据库，它不仅性能高效而">
+<meta name="twitter:title" content="Redis探索之三、列表">
+<meta name="twitter:description" content="一、概述&amp;emsp;&amp;emsp;Redis对链表的存储支持使得Redis本身在key-value存储中成为特别的一员。一个列表可以有序的存储多个字符串，其中可以是数值型的字符串也可以是纯正型的字符串。以下是存储示例： 二、简单命令以及使用Redis对于列表操作的命令和JAVA中的双端队列很相似，对于每一个列表可以从表头开始操作也可以从表尾开始操作，具体的命令可以看下面一张表格：    命令 使用格">
+<meta name="twitter:image" content="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-16/34636993.jpg">
 
 
 
@@ -120,13 +122,13 @@
 
 
 
-  <link rel="canonical" href="https://faithchild.github.io/2018/08/14/Redis探索之一、初识Redis/"/>
+  <link rel="canonical" href="https://faithchild.github.io/2018/08/16/Redis学习之三、列表/"/>
 
 
 
 
 
-  <title>Redis探索之一、初识Redis | 小杰的博客</title>
+  <title>Redis探索之三、列表 | 小杰的博客</title>
   
 
 
@@ -263,7 +265,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://faithchild.github.io/2018/08/14/Redis探索之一、初识Redis/">
+    <link itemprop="mainEntityOfPage" href="https://faithchild.github.io/2018/08/16/Redis学习之三、列表/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Xiao Jie">
@@ -280,7 +282,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Redis探索之一、初识Redis</h1>
+          <h1 class="post-title" itemprop="name headline">Redis探索之三、列表</h1>
         
 
         <div class="post-meta">
@@ -292,8 +294,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-14T21:31:10+08:00">
-                2018-08-14
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-16T16:20:48+08:00">
+                2018-08-16
               </time>
             
 
@@ -324,7 +326,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,092
+                  634
                 </span>
               
 
@@ -340,7 +342,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  4
+                  2
                 </span>
               
             </div>
@@ -361,88 +363,61 @@
       
 
       
-        <h4 id="一、简介"><a href="#一、简介" class="headerlink" title="一、简介"></a>一、简介</h4><p>&emsp;&emsp;随着互联网的发展，网络逐渐普及整个社会，能够接触网络上网的人员也越来越多。各个互联网公司的用户量也在日益增长，以前关系型数据库能满足公司的需求，但是慢慢的随着用户量的增长，数据搜索的速度变得越来越慢，这时候就出现了基于内存存储的非关系型数据库。比如Redis、memcache、MongoDB等。<br>&emsp;&emsp;Redis是一个远程内存数据库，它不仅性能高效而且具备了复制性能以及多样的存储结构。除了这些，它还可以将内存中的数据保存到磁盘中，也可以使用复制功能来拓展读取数据的性能。</p>
-<h4 id="二、特点以及功能"><a href="#二、特点以及功能" class="headerlink" title="二、特点以及功能"></a>二、特点以及功能</h4><p>&emsp;&emsp;非关系型数据库在小公司或者用户量不大的公司用的并不多，小型的memcache就能解决它们的需求问题，也就是在查询数据之前做了一层缓存。而经常使用的就是关系型数据库MySql，至于Mysql最大的特点就是免费。学习过Mysql的人都知道，在数据库中查询一条数据的麻烦程度，写Sql通过映射关系将表与JAVA Bean联系在一起最终获取想要的结果，而Redis就类似于Map这种key-value键值对，通过key去获取value用法及其方便而且速度高效，这边可以看一下Redis与Mysql、Memcache以及MongoDB之间的区别：</p>
+        <h4 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h4><p>&emsp;&emsp;Redis对链表的存储支持使得Redis本身在key-value存储中成为特别的一员。一个列表可以有序的存储多个字符串，其中可以是数值型的字符串也可以是纯正型的字符串。以下是存储示例：<br><br><img src="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-16/34636993.jpg" alt=""></p>
+<h4 id="二、简单命令以及使用"><a href="#二、简单命令以及使用" class="headerlink" title="二、简单命令以及使用"></a>二、简单命令以及使用</h4><p>Redis对于列表操作的命令和JAVA中的双端队列很相似，对于每一个列表可以从表头开始操作也可以从表尾开始操作，具体的命令可以看下面一张表格：</p>
 <table>
 <thead>
 <tr>
-<th>名称</th>
-<th>类型</th>
-<th>数据存储选项</th>
-<th>查询类型</th>
-<th>附加功能</th>
+<th>命令</th>
+<th>使用格式</th>
+<th>行为</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Redis</td>
-<td>使用内存存储的非关系型数据库</td>
-<td>字符串、列表、集合、散列表、有序集合5种</td>
-<td>每个类型都有自己的专属命令</td>
-<td>发布订阅、持久化、脚本</td>
+<td>LPUSH</td>
+<td>RPUSH list-key item</td>
+<td>从链表左端添加元素，返回的是当前列表的长度</td>
 </tr>
 <tr>
-<td>Memcache</td>
-<td>使用内存存储的键值对</td>
-<td>键值之间的映射</td>
-<td>基本的CURD操作</td>
-<td>有缺陷，相比Redis无法持久化</td>
+<td>LRANGE</td>
+<td>LRANGE list-key 0 2</td>
+<td>获取列表位置从0到2的元素</td>
 </tr>
 <tr>
-<td>MySql</td>
-<td>关系型数据库</td>
-<td>很简单的库、表结构</td>
-<td>Insert、Select、Delete、Update操作</td>
-<td>主从复制、持久化</td>
+<td>LINDEX</td>
+<td>LINDEX list-key 1</td>
+<td>取出列表中在1位置的元素</td>
 </tr>
 <tr>
-<td>MongoDB</td>
-<td>使用硬盘存储非关系型数据库</td>
-<td>可以存储一些大文件</td>
-<td>创建、读取、删除等基本操作</td>
-<td>支持map-reduce操作、主从、分片等</td>
+<td>LPOP</td>
+<td>LPOP list-key</td>
+<td>从列表的左边弹出一个值</td>
+</tr>
+<tr>
+<td>LTRIM</td>
+<td>LTRIM list-key 0 1</td>
+<td>对列表进行操作，只保留从0开始到1的元素包含0和1</td>
+</tr>
+<tr>
+<td>BLPOP</td>
+<td>BLPOP list-key [key-name…] timeout</td>
+<td>从第一个非空列表中弹出位于最左端的元素，或者在timeout时间内等待</td>
+</tr>
+<tr>
+<td>RPOPLPUSH</td>
+<td>RPOPLPUSH list-key destion-key</td>
+<td>从list-key列表中弹出位于最右端的元素，然后将这元素推入目标队列的最左端，并返回这个元素</td>
+</tr>
+<tr>
+<td>BRPOPLPUSH</td>
+<td>BRPOPLPUSH list-key destion-key timeout</td>
+<td>在上面的基础上增加了等待的机制</td>
 </tr>
 </tbody>
 </table>
-<h4 id="三、Redis数据结构"><a href="#三、Redis数据结构" class="headerlink" title="三、Redis数据结构"></a>三、Redis数据结构</h4><p>Redis中可以存储5种不同的数据，包括String(字符串)、List(列表)、SET(集合)、Hash(散列)和ZSET(有序集合)</p>
-<table>
-<thead>
-<tr>
-<th>结构类型</th>
-<th>结构存储的值</th>
-<th>读写能力</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>STRING</td>
-<td>可以是字符串、整数或者浮点数</td>
-<td>对整个字符串或者字符串的其中一部分执行操作；对整数和浮点数执行自增或者自减的操作</td>
-</tr>
-<tr>
-<td>LIST</td>
-<td>一个链表，链表上的每个节点都包含了一个字符串</td>
-<td>从链表的两端推入或者弹出元素；根据偏移量对链表进行修剪；读取单个或者多个元素；根据值查找或者移除</td>
-</tr>
-<tr>
-<td>SET</td>
-<td>包含字符串的无序收集器，并且包含的每个字符串都是独一无二、各不相同的</td>
-<td>添加、获取、移除单个元素；检查一个元素是否存在与集合中；计算交集、并集、差集；从集合里面随机获取元素</td>
-</tr>
-<tr>
-<td>HASH</td>
-<td>包含键值对的无序散列表</td>
-<td>添加、获取、移除单个键值对；获取所有键值对</td>
-</tr>
-<tr>
-<td>ZSET</td>
-<td>字符串成员与浮点数分值之间的有序映射，元素的排列顺序由分值的大小决定</td>
-<td>添加、获取删除单个元素；根据分值范围或者成员来获取元素</td>
-</tr>
-</tbody>
-</table>
-<p>虽然Redis中存储元素的数据结构有这五种，但是对于操这些数据结构的命令却很多。</p>
-<h4 id="四、总结"><a href="#四、总结" class="headerlink" title="四、总结"></a>四、总结</h4><p>&emsp;&emsp;上面只是列出了Redis一些简单的特性以及优势和特点，而Redis真正的强大在于它能处理分布式的中一些复杂的场景、以及相比memchache这种缓存结构缺少的可持久化的功能、以及单机情况下无法满足而使用集群的方式进行处理。<br><br><br></p>
+<p>上面的大致涵盖了对列表操作的命令，当然上面大部分的都是从左开始对列表进行操作，而对应的从右开始操作只需要将L改成R即可。从上面的命令看出，Redis相对于Memcache这种简单数据存储的缓存库而言，其在功能上的优势是巨大的。比如RLPOP这些阻塞型的操作就可以将列表当作阻塞队列来使用。</p>
+<h4 id="三、总结"><a href="#三、总结" class="headerlink" title="三、总结"></a>三、总结</h4><p>&emsp;&emsp;对于Redis的列表操作，比较重要的就是推出推入元素命令这是最基本的添加元素和获取元素的方法。列表的这些命令功能已经很强大，并且注意一点存放在列表中的元素是可以相同的。所以如果希望实现和JAVA中的Set集合一样的原理就需要使用Redis中的第三种数据结构集合。<br><br></p>
 <hr>
 <p>&emsp;&emsp;<strong>不管岁月里经历多少辛酸和艰难，告诉自己风雨本身就是一种内涵，努力的面对，不过就是一场命运的漂流，既然在路上，那么目的地必然也就是前方。</strong></p>
 <hr>
@@ -476,15 +451,15 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2018/08/15/Redis学习之二、字符串/" rel="next" title="Redis数据结构、字符串">
+                <i class="fa fa-chevron-left"></i> Redis数据结构、字符串
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/08/15/Redis之二、字符串/" rel="prev" title="Redis数据结构、字符串">
-                Redis数据结构、字符串 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -561,7 +536,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -617,7 +592,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#一、简介"><span class="nav-number">1.</span> <span class="nav-text">一、简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二、特点以及功能"><span class="nav-number">2.</span> <span class="nav-text">二、特点以及功能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#三、Redis数据结构"><span class="nav-number">3.</span> <span class="nav-text">三、Redis数据结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#四、总结"><span class="nav-number">4.</span> <span class="nav-text">四、总结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二、简单命令以及使用"><span class="nav-number">2.</span> <span class="nav-text">二、简单命令以及使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#三、总结"><span class="nav-number">3.</span> <span class="nav-text">三、总结</span></a></li></ol></div>
             
 
           </div>
@@ -668,7 +643,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共1.8k字</span>
+  <span class="post-count">博客全站共2.5k字</span>
 </div>
         
 
