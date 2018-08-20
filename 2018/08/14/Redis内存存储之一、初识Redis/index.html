@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="一、简介&amp;emsp;&amp;emsp;随着中国互联网的发展，网络在人们的生活中扮演着越来越重要的角色，方便着人们的日常生活包括出行旅游、支付等。当然在这个过程中也萌生了很多大型互联网公司比如阿里巴巴、携程、腾讯等，每个互联网公司的成功都离不开其背后的庞大的用户量，在这个用户量体系下关系型数据库能满足公司的需求，但是每个公司都遵从用户体验，关系型数据库虽然能满足业务的需求但是对于客户的体验感就会很差,这时">
+<meta name="description" content="一、简介&amp;emsp;&amp;emsp;随着中国互联网的发展，网络在人们的生活中扮演着越来越重要的角色，方便着人们的日常生活包括出行旅游、支付等。当然在这个过程中也萌生了很多大型互联网公司比如阿里巴巴、携程、腾讯等，每个互联网公司的成功都离不开其背后的庞大的用户量，在这个用户量体系下关系型数据库可能能满足公司的需求，但是每个公司都遵从用户体验，关系型数据库虽然能满足业务的需求但是对于客户的体验感就会很差,">
 <meta name="keywords" content="Redis">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis内存存储之一、初识Redis">
 <meta property="og:url" content="https://faithchild.github.io/2018/08/14/Redis内存存储之一、初识Redis/index.html">
 <meta property="og:site_name" content="小杰的博客">
-<meta property="og:description" content="一、简介&amp;emsp;&amp;emsp;随着中国互联网的发展，网络在人们的生活中扮演着越来越重要的角色，方便着人们的日常生活包括出行旅游、支付等。当然在这个过程中也萌生了很多大型互联网公司比如阿里巴巴、携程、腾讯等，每个互联网公司的成功都离不开其背后的庞大的用户量，在这个用户量体系下关系型数据库能满足公司的需求，但是每个公司都遵从用户体验，关系型数据库虽然能满足业务的需求但是对于客户的体验感就会很差,这时">
+<meta property="og:description" content="一、简介&amp;emsp;&amp;emsp;随着中国互联网的发展，网络在人们的生活中扮演着越来越重要的角色，方便着人们的日常生活包括出行旅游、支付等。当然在这个过程中也萌生了很多大型互联网公司比如阿里巴巴、携程、腾讯等，每个互联网公司的成功都离不开其背后的庞大的用户量，在这个用户量体系下关系型数据库可能能满足公司的需求，但是每个公司都遵从用户体验，关系型数据库虽然能满足业务的需求但是对于客户的体验感就会很差,">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-08-20T03:05:23.420Z">
+<meta property="og:updated_time" content="2018-08-20T09:20:44.036Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redis内存存储之一、初识Redis">
-<meta name="twitter:description" content="一、简介&amp;emsp;&amp;emsp;随着中国互联网的发展，网络在人们的生活中扮演着越来越重要的角色，方便着人们的日常生活包括出行旅游、支付等。当然在这个过程中也萌生了很多大型互联网公司比如阿里巴巴、携程、腾讯等，每个互联网公司的成功都离不开其背后的庞大的用户量，在这个用户量体系下关系型数据库能满足公司的需求，但是每个公司都遵从用户体验，关系型数据库虽然能满足业务的需求但是对于客户的体验感就会很差,这时">
+<meta name="twitter:description" content="一、简介&amp;emsp;&amp;emsp;随着中国互联网的发展，网络在人们的生活中扮演着越来越重要的角色，方便着人们的日常生活包括出行旅游、支付等。当然在这个过程中也萌生了很多大型互联网公司比如阿里巴巴、携程、腾讯等，每个互联网公司的成功都离不开其背后的庞大的用户量，在这个用户量体系下关系型数据库可能能满足公司的需求，但是每个公司都遵从用户体验，关系型数据库虽然能满足业务的需求但是对于客户的体验感就会很差,">
 
 
 
@@ -324,7 +324,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2,392
+                  2,418
                 </span>
               
 
@@ -361,7 +361,7 @@
       
 
       
-        <h4 id="一、简介"><a href="#一、简介" class="headerlink" title="一、简介"></a>一、简介</h4><p>&emsp;&emsp;随着中国互联网的发展，网络在人们的生活中扮演着越来越重要的角色，方便着人们的日常生活包括出行旅游、支付等。当然在这个过程中也萌生了很多大型互联网公司比如阿里巴巴、携程、腾讯等，每个互联网公司的成功都离不开其背后的庞大的用户量，在这个用户量体系下关系型数据库能满足公司的需求，但是每个公司都遵从用户体验，关系型数据库虽然能满足业务的需求但是对于客户的体验感就会很差,这时候就出现了基于内存存储的非关系型数据库。比如Redis、memcache、MongoDB等。<br>&emsp;&emsp;Redis是一个内存数据库，它不仅性能强劲，而且具备复制功能以及为解决复杂问题而存在的多种多样的数据结构。除了强大的数据结构以外，Redis可以通过复制、持久化、客户端分片等特性，利用多台Redis服务器集群来满足大型系统的需求。<br>&emsp;&emsp;Redis即可以作为主存储库来保存业务中的数据，也可以作为关系型数据库的辅助存储库，多样性的使用使得Redis在大型系统的出场率大幅度的增加。当然至于Redis作为主存储库还是辅助存储库都是依赖于业务场景的，需要用户根据自己的业务场景选择。</p>
+        <h4 id="一、简介"><a href="#一、简介" class="headerlink" title="一、简介"></a>一、简介</h4><p>&emsp;&emsp;随着中国互联网的发展，网络在人们的生活中扮演着越来越重要的角色，方便着人们的日常生活包括出行旅游、支付等。当然在这个过程中也萌生了很多大型互联网公司比如阿里巴巴、携程、腾讯等，每个互联网公司的成功都离不开其背后的庞大的用户量，在这个用户量体系下关系型数据库可能能满足公司的需求，但是每个公司都遵从用户体验，关系型数据库虽然能满足业务的需求但是对于客户的体验感就会很差,比如浏览一个网页页面出来了但是白板一片的这种情况，这时候就出现了基于内存存储的非关系型数据库。比如Redis、memcache、MongoDB等。<br>&emsp;&emsp;Redis是一个内存数据库，它不仅性能强劲，而且具备复制功能以及为解决复杂问题而存在的多种多样的数据结构。除了强大的数据结构以外，Redis可以通过复制、持久化、客户端分片等特性，利用多台Redis服务器集群来满足大型系统的需求。<br>&emsp;&emsp;Redis即可以作为主存储库来保存业务中的数据，也可以作为关系型数据库的辅助存储库，多样性的使用使得Redis在大型系统的出场率大幅度的增加。当然至于Redis作为主存储库还是辅助存储库都是依赖于业务场景的，需要用户根据自己的业务场景选择。</p>
 <h4 id="二、数据库对比"><a href="#二、数据库对比" class="headerlink" title="二、数据库对比"></a>二、数据库对比</h4><p>&emsp;&emsp;Redis这种非关系型数据库在小型公司或者业务量并不大的公司用的不多。通常公司会为了提高一点效率使用缓存而小型公司以及业务量一般的公司使用Memcache即可。大型公司公司也一般不会使用单个Redis服务器，通常会多个Redis服务器集群来为公司提供缓存服务。当然市面上有很多NoSql产品与关系型数据库产品我们主要了解下关系型数据库MySql与市面上常用的NoSql之间的差异:</p>
 <table>
 <thead>
@@ -478,22 +478,6 @@
       
 
       
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/08/15/Redis学习之二、字符串/" rel="prev" title="Redis学习之二、字符串">
-                Redis学习之二、字符串 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
 
       
       
@@ -566,7 +550,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">1</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -673,7 +657,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共3.8k字</span>
+  <span class="post-count">博客全站共2.4k字</span>
 </div>
         
 
