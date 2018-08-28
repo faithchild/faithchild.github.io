@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Redis," />
+  <meta name="keywords" content="JVM," />
 
 
 
@@ -79,18 +79,24 @@
 
 
 
-<meta name="description" content="一、简介&amp;emsp;&amp;emsp;随着中国互联网的发展，网络在人们的生活中扮演着越来越重要的角色，方便着人们的日常生活包括出行旅游、支付等。当然在这个过程中也萌生了很多大型互联网公司比如阿里巴巴、携程、腾讯等，每个互联网公司的成功都离不开其背后的庞大的用户量，在这个用户量体系下关系型数据库可能能满足公司的需求，但是每个公司都遵从用户体验，关系型数据库虽然能满足业务的需求但是对于客户的体验感就会很差,">
-<meta name="keywords" content="Redis">
+<meta name="description" content="一、前言&amp;emsp;&amp;emsp;有时候我总在幻想如果计算机的内存无限大那么程序员的生活将是多么美好，这对于无论是C和C++的开发者还是JAVA开发者而言无疑是最大的福音，对于C和C++开发者再也不用写什么分配内存和内存释放的方法，而对于JAVA开发者而言再也不用担心程序的各种OOM问题的发生。&amp;emsp;&amp;emsp;有句话我们都懂，理想是美好的、现实是骨感的，对于C和C++开发者而言他们必须为每个">
+<meta name="keywords" content="JVM">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Redis内存存储之一、初识Redis">
-<meta property="og:url" content="https://faithchild.github.io/2018/08/14/Redis内存存储之一、初识Redis/index.html">
+<meta property="og:title" content="JVM 对象生死">
+<meta property="og:url" content="https://faithchild.github.io/2018/08/21/JVM内存小秘密/index.html">
 <meta property="og:site_name" content="小杰的博客">
-<meta property="og:description" content="一、简介&amp;emsp;&amp;emsp;随着中国互联网的发展，网络在人们的生活中扮演着越来越重要的角色，方便着人们的日常生活包括出行旅游、支付等。当然在这个过程中也萌生了很多大型互联网公司比如阿里巴巴、携程、腾讯等，每个互联网公司的成功都离不开其背后的庞大的用户量，在这个用户量体系下关系型数据库可能能满足公司的需求，但是每个公司都遵从用户体验，关系型数据库虽然能满足业务的需求但是对于客户的体验感就会很差,">
+<meta property="og:description" content="一、前言&amp;emsp;&amp;emsp;有时候我总在幻想如果计算机的内存无限大那么程序员的生活将是多么美好，这对于无论是C和C++的开发者还是JAVA开发者而言无疑是最大的福音，对于C和C++开发者再也不用写什么分配内存和内存释放的方法，而对于JAVA开发者而言再也不用担心程序的各种OOM问题的发生。&amp;emsp;&amp;emsp;有句话我们都懂，理想是美好的、现实是骨感的，对于C和C++开发者而言他们必须为每个">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-08-20T09:20:44.036Z">
+<meta property="og:image" content="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-22/6963953.jpg">
+<meta property="og:image" content="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-22/27603860.jpg">
+<meta property="og:image" content="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-22/26057134.jpg">
+<meta property="og:image" content="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-23/59148166.jpg">
+<meta property="og:image" content="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-23/22129473.jpg">
+<meta property="og:updated_time" content="2018-08-28T05:42:55.530Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Redis内存存储之一、初识Redis">
-<meta name="twitter:description" content="一、简介&amp;emsp;&amp;emsp;随着中国互联网的发展，网络在人们的生活中扮演着越来越重要的角色，方便着人们的日常生活包括出行旅游、支付等。当然在这个过程中也萌生了很多大型互联网公司比如阿里巴巴、携程、腾讯等，每个互联网公司的成功都离不开其背后的庞大的用户量，在这个用户量体系下关系型数据库可能能满足公司的需求，但是每个公司都遵从用户体验，关系型数据库虽然能满足业务的需求但是对于客户的体验感就会很差,">
+<meta name="twitter:title" content="JVM 对象生死">
+<meta name="twitter:description" content="一、前言&amp;emsp;&amp;emsp;有时候我总在幻想如果计算机的内存无限大那么程序员的生活将是多么美好，这对于无论是C和C++的开发者还是JAVA开发者而言无疑是最大的福音，对于C和C++开发者再也不用写什么分配内存和内存释放的方法，而对于JAVA开发者而言再也不用担心程序的各种OOM问题的发生。&amp;emsp;&amp;emsp;有句话我们都懂，理想是美好的、现实是骨感的，对于C和C++开发者而言他们必须为每个">
+<meta name="twitter:image" content="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-22/6963953.jpg">
 
 
 
@@ -120,13 +126,13 @@
 
 
 
-  <link rel="canonical" href="https://faithchild.github.io/2018/08/14/Redis内存存储之一、初识Redis/"/>
+  <link rel="canonical" href="https://faithchild.github.io/2018/08/21/JVM内存小秘密/"/>
 
 
 
 
 
-  <title>Redis内存存储之一、初识Redis | 小杰的博客</title>
+  <title>JVM 对象生死 | 小杰的博客</title>
   
 
 
@@ -263,7 +269,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://faithchild.github.io/2018/08/14/Redis内存存储之一、初识Redis/">
+    <link itemprop="mainEntityOfPage" href="https://faithchild.github.io/2018/08/21/JVM内存小秘密/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Xiao Jie">
@@ -280,7 +286,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Redis内存存储之一、初识Redis</h1>
+          <h1 class="post-title" itemprop="name headline">JVM 对象生死</h1>
         
 
         <div class="post-meta">
@@ -292,8 +298,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-14T21:31:10+08:00">
-                2018-08-14
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-21T22:10:18+08:00">
+                2018-08-21
               </time>
             
 
@@ -324,7 +330,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2,418
+                  2,244
                 </span>
               
 
@@ -361,93 +367,15 @@
       
 
       
-        <h4 id="一、简介"><a href="#一、简介" class="headerlink" title="一、简介"></a>一、简介</h4><p>&emsp;&emsp;随着中国互联网的发展，网络在人们的生活中扮演着越来越重要的角色，方便着人们的日常生活包括出行旅游、支付等。当然在这个过程中也萌生了很多大型互联网公司比如阿里巴巴、携程、腾讯等，每个互联网公司的成功都离不开其背后的庞大的用户量，在这个用户量体系下关系型数据库可能能满足公司的需求，但是每个公司都遵从用户体验，关系型数据库虽然能满足业务的需求但是对于客户的体验感就会很差,比如浏览一个网页页面出来了但是白板一片的这种情况，这时候就出现了基于内存存储的非关系型数据库。比如Redis、memcache、MongoDB等。<br>&emsp;&emsp;Redis是一个内存数据库，它不仅性能强劲，而且具备复制功能以及为解决复杂问题而存在的多种多样的数据结构。除了强大的数据结构以外，Redis可以通过复制、持久化、客户端分片等特性，利用多台Redis服务器集群来满足大型系统的需求。<br>&emsp;&emsp;Redis即可以作为主存储库来保存业务中的数据，也可以作为关系型数据库的辅助存储库，多样性的使用使得Redis在大型系统的出场率大幅度的增加。当然至于Redis作为主存储库还是辅助存储库都是依赖于业务场景的，需要用户根据自己的业务场景选择。</p>
-<h4 id="二、数据库对比"><a href="#二、数据库对比" class="headerlink" title="二、数据库对比"></a>二、数据库对比</h4><p>&emsp;&emsp;Redis这种非关系型数据库在小型公司或者业务量并不大的公司用的不多。通常公司会为了提高一点效率使用缓存而小型公司以及业务量一般的公司使用Memcache即可。大型公司公司也一般不会使用单个Redis服务器，通常会多个Redis服务器集群来为公司提供缓存服务。当然市面上有很多NoSql产品与关系型数据库产品我们主要了解下关系型数据库MySql与市面上常用的NoSql之间的差异:</p>
-<table>
-<thead>
-<tr>
-<th>名称</th>
-<th>类型</th>
-<th>存储的数据类型</th>
-<th>查询方式</th>
-<th>附加功能</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Redis</td>
-<td>内存存储非关系型数据库</td>
-<td>字符串、列表、集合、散列表、有序集合5种</td>
-<td>每种不同的数据类型都有自己的专属命令</td>
-<td>发布与订阅、主从复制、持久化、脚本存储过程等</td>
-</tr>
-<tr>
-<td>Memcache</td>
-<td>内存存储键值对</td>
-<td>键值之间的映射(key-value模式)</td>
-<td>基本的CURD操作</td>
-<td>缺陷:没有Redis的存储数据类型多、无法持久化数据</td>
-</tr>
-<tr>
-<td>MySql</td>
-<td>关系型数据库</td>
-<td>很简单的库、表结构</td>
-<td>Insert、Select、Delete、Update操作</td>
-<td>主从复制、持久化、支持ACID特性</td>
-</tr>
-<tr>
-<td>MongoDB</td>
-<td>硬盘存储非关系型数据库</td>
-<td>可以存储一些大文件</td>
-<td>创建、读取、删除等基本操作</td>
-<td>支持map-reduce操作、主从、分片等</td>
-</tr>
-</tbody>
-</table>
-<p>不同的数据库解决不同的问题，比如Mysql等关系型数据库天生满足ACID特性比如简单模式下使用memcache可以替代复杂的Redis，当存储的数据是大文件时就可以使用MangoDB，具体的使用也是需要根据业务量来进行选择的。</p>
-<h4 id="三、Redis数据结构"><a href="#三、Redis数据结构" class="headerlink" title="三、Redis数据结构"></a>三、Redis数据结构</h4><p>&emsp;&emsp;Redis中可以存储5种不同的数据，包括STRING(字符串)、LIST(列表)、SET(集合)、HASH(散列)和ZSET(有序集合)，下面展示了它们之间的区别:</p>
-<table>
-<thead>
-<tr>
-<th>结构类型</th>
-<th>结构存储的值</th>
-<th>读写操作的功能</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>STRING</td>
-<td>可以是字符串、整数或者浮点数</td>
-<td>对整个字符串或者字符串的其中一部分执行操作，对整数和浮点数执行自增或者自减的操作，保存的不单单是简单的字符串类型</td>
-</tr>
-<tr>
-<td>LIST</td>
-<td>一个链表，链表上的每个节点都包含了一个字符串</td>
-<td>从链表的两端推入或者弹出元素，根据偏移量对链表进行修剪，读取单个或者多个元素，根据值查找或者移除</td>
-</tr>
-<tr>
-<td>SET</td>
-<td>包含字符串的无序收集器，并且包含的每个字符串都是独一无二、各不相同的</td>
-<td>添加、获取、移除单个元素，检查一个元素是否存在与集合中，计算交集、并集、差集，从集合里面随机获取元素</td>
-</tr>
-<tr>
-<td>HASH</td>
-<td>包含键值对的无序散列表</td>
-<td>添加、获取、移除单个键值对，获取所有键值对</td>
-</tr>
-<tr>
-<td>ZSET</td>
-<td>字符串成员与浮点数分值之间的有序映射，元素的排列顺序由分值的大小决定</td>
-<td>添加、获取删除单个元素，根据分值范围或者成员来获取元素</td>
-</tr>
-</tbody>
-</table>
-<p>虽然Redis中存储元素的数据结构有这五种，但是对于操这些数据结构的命令却很多。这也体现了Redis的强大之处，可以处理多种多样的数据，并且对多种多样的数据提供了多样的命令处理。</p>
-<h4 id="四、持久化"><a href="#四、持久化" class="headerlink" title="四、持久化"></a>四、持久化</h4><p>&emsp;&emsp;我们知道关系型数据库中保存的数据是永久的除非去数据库中进行删除而内存数据库不同，内存数据库中的数据都是保存在机器内存中的，当机器出现问题或者突然断电等问题，存放在内存中的数据就完全消失了。这种情况是某些场景所无法容忍的，但是并不是没有解决方法，Redis提供了两种持久化方式:<br>&emsp;&emsp;1. RDB持久化:通常RDB持久化被称为快照持久，它可以将某一时刻的所有数据都写入硬盘里面。<br>&emsp;&emsp;2. AOF持久化:通常AOF持久化被称为只追加文件，它会在执行写命令时，将被执行的写命令复制到硬盘中。<br>两种持久化方式即可以一起使用也可以分开使用。RDB持久化可能会造成丢失最近生成快照之后写入的所有数据，如果生成快照的时间间隔长就可能丢失大部分的最新写入数据。AOF持久化是将每次执行的写命令保存到硬盘中，下次只要运行这个文件就能恢复Redis中的所有数据，相比RDB持久化AOF持久化可以大概率的减少丢失的数据，但是AOF也有缺陷就是会造成保存在硬盘上的AOF文件越来越大，从而导致机器的硬盘可存储量越来越少最终无法保存其它文件。当然对于不同的持久化问题有不同的解决办法这边就先不介绍了只是简单了解持久化的方式。不同的持久化方式也需要用户根据不同的场景选择不同的处理方式。</p>
-<h4 id="五、复制"><a href="#五、复制" class="headerlink" title="五、复制"></a>五、复制</h4><p>&emsp;&emsp;通常而言，公司里面使用Redis不会只使用一台服务器，因为一旦这台Redis发生问题时，那么Redis就无法为外界其它系统提供服务，这就会导致业务出现问题。所以一般都会有个两三台或者更多台组成一个集群给外界提供服务。这时候就问出现一个问题如何保证当我们向主服务器写入数据的时候，从服务器能够更新自己的数据获取最新的数据进行保存。以上问题的解决办法就是复制，通过主服务器与从服务器之间的复制功能来保证每次从服务器在主服务器写入新数据时就进行更新自己的数据。</p>
-<h4 id="六、事务"><a href="#六、事务" class="headerlink" title="六、事务"></a>六、事务</h4><p>&emsp;&emsp;我们知道关系型数据库支持事务，在关系型数据库中是这样来描述事务的，事务保证了一组SQL语句只有同时执行成功的时候才算成功才可以进行commit操作，只要一个语句出现问题就会进行rollback回滚的操作。<br>&emsp;&emsp;Redis中的事务和传统关系型数据的事务有些区别，Redis中的事务是通过MULTI命令开始，然后可以执行批量命令最后以EXEC结束。这种事务处理存在一些缺陷，因为它不像数据库一样会报异常，因此无法直观的判断Redis命令是否执行正确。当然在这只是简单的介绍一下Redis事务。</p>
-<h4 id="七、集群"><a href="#七、集群" class="headerlink" title="七、集群"></a>七、集群</h4><p>&emsp;&emsp;在复制功能的时候说过，一般公司使用Redis不会使用一台因为这样的架构是没有容错性可言的，一旦Redis系统发生奔溃就发生崩溃了系统也就会导致奔溃。所以一般都是多台机器组合而成的集群，Redis中的集群通过分区(Cluster)方式实现，或者哨兵(Sentinel)解决。</p>
-<h4 id="八、总结"><a href="#八、总结" class="headerlink" title="八、总结"></a>八、总结</h4><p>&emsp;&emsp;Redis作为大型公司常用的缓存层架构的技术选型，有着它独有的优势和业界解决方案，多样性的数据结构、持久化、集群等都是其在大型系统中出场率提升的关键。<br><br></p>
+        <h4 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h4><p>&emsp;&emsp;有时候我总在幻想如果计算机的内存无限大那么程序员的生活将是多么美好，这对于无论是C和C++的开发者还是JAVA开发者而言无疑是最大的福音，对于C和C++开发者再也不用写什么分配内存和内存释放的方法，而对于JAVA开发者而言再也不用担心程序的各种OOM问题的发生。<br>&emsp;&emsp;有句话我们都懂，理想是美好的、现实是骨感的，对于C和C++开发者而言他们必须为每个对象分配适合的内存并且当对象被使用完毕以后释放每个对象占用的内存，而对于JAVA开发者而言他们不需要做任何的操作，这点往往让很多JAVA开发者感到轻松，然而往往这种轻松导致了当程序出现OOM等内存方面的异常的时候无从下手不知道从何开始查询错误。</p>
+<h4 id="二、对象的死亡"><a href="#二、对象的死亡" class="headerlink" title="二、对象的死亡"></a>二、对象的死亡</h4><p>&emsp;&emsp;JVM堆是保存JAVA程序运行时产生的对象实例，大部分的GC操作也是针对堆进行。那么什么样的对象需要被回收，什么样的对象程序是需要的？只有判断出哪些对象是程序需要的哪些是程序不会再使用到的才能释放合适的内存，GC回收掉合适的对象。在JVM中有两种方法进行判断:<br>&emsp;&emsp;1. 引用计数法:从字面理解，对象创建出来都是给别人用的，程序不使用创建了也没有意义。那么谁引用了该对象就在引用值上进行增加1，不用了就再减1。等这个值到了0就代表已经没人再引用了，毕竟该做的事也做完了所谓利用也利用完了就可以丢弃了。例如对象2和对象3都引用了对象1此时对象1的计数器值就是2代表此时该对象被其它两个对象引用。<br><img src="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-22/6963953.jpg" alt="">当对象3引用完对象1以后就不再引用对象1的时候就会形成下面的状况:<br><img src="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-22/27603860.jpg" alt="">这个判断方式很简单高效就是引用值的判断但是完美的东西毕竟是不存在的，什么事物都有两面性同样引用计数器也有判断不了的情况(对象之间相互循环引用，两个对象之间相互引用而外界没有引用其中任何一个对象，两个对象对于程序而言都是已经使用完可以释放的，但是因为它们互相引用导致引用值不为0而导致无法被回收)。<br><img src="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-22/26057134.jpg" alt="">运行中的程序代表是正在执行的程序，而对象2和对象3一开始是在运行程序中被引用的当程序不再需要它们的时候就不引用，而此时由于对象2和对象3之间的互相引用导致其计数器值都不为0无法被回收<br>&emsp;&emsp;2. 可达性分析算法:从字面量上进行分析，可达是指谁能达到谁，到达了是程序需要的还是丢弃的？对以上的问题有了答案也就理解了可达性分析，在JAVA中JVM将某些引用作为”GC ROOTS”用来表示引用链的最顶层，从这些引用链往上只要能通过一条链路到达这个GC ROOTS那就代表这个对象在这个程序中是需要的暂时不能被清除，相反当一个对象无法到达顶层GC ROOTS的时候就代表这个对象可以被回收了。<br><img src="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-23/59148166.jpg" alt="">如上图，对于对象1、2、3、4而言现在都有一条引用链引用到GC ROOTS代表它们在程序中现在都是需要的。而当某一个时刻对象4不需要的时候就会形成下面的示例而被GC回收<br><img src="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-23/22129473.jpg" alt="">这种判断对象是否应该被回收的方法理解起来不难，唯一需要确定的是哪些对象可以被作为GC ROOTS引用。引用R大说的:<br></p>
+<blockquote>
+<p>所谓GC ROOTS或者说Tracing GC根集合并不是对象，而是一组活跃的引用。这些引用包括:<br>&emsp;&emsp;所有Java线程当前活跃的栈帧里指向GC堆里的对象的引用；换句话说，当前所有正在被调用的方法的引用类型的参数/局部变量/临时值。(栈中的变量)<br>&emsp;&emsp;VM的一些静态数据结构里指向GC堆里的对象的引用，例如说HotSpot VM里的Universe里有很多这样的引用。<br>&emsp;&emsp;JNI handles，包括global handles和local handles<br>&emsp;&emsp;所有当前被加载的Java类(看情况并不是所有对象都保存在堆和栈中)<br>&emsp;&emsp;Java类的引用类型静态变量(看情况)<br>&emsp;&emsp;Java类的运行时常量池里的引用类型常量（String或Class类型）<br>&emsp;&emsp;String常量池（StringTable）里的引用(看情况)</p>
+</blockquote>
+<p>Tracing GC或者说GC ROOTS这种判断方式的根本原理:给定一个引用集合作为根出发，通过引用关系遍历关系对象图，能被遍历到的就是存活的对象其它对象都是需要被GC回收的。需要注意一点:引用计数法并不是寻找不被引用的对象，而是找到引用中的对象而将其它对象判定为死亡的。</p>
+<h4 id="三、对象的生存"><a href="#三、对象的生存" class="headerlink" title="三、对象的生存"></a>三、对象的生存</h4><p>&emsp;&emsp;当一个对象被GC后就代表这个对象就已经彻底死亡了，那么对象就只能接受被制裁的命运吗？并不是，就算一个对象经过了可达性分析算法被判断成为了要被GC的对象，它也有机会拯救一下自己，但是这在JAVA中并不鼓励这样做，因为这样可能会导致很多不可控的事情发生！<br>&emsp;&emsp;在JAVA中要真正的宣告一个对象的死亡至少要经历两次标记的过程。第一次发生在与GC ROOTS对象之间没有连接的时候，除了标记以外这个过程还会确定一个对象是否有必要执行finalize()方法(如果一个对象没有覆盖finalize()方法或者finalize()方法已经执行过了就会被视为没有必要执行)，如果这个对象被判定有必要执行finalize()方法，这个对象就会被放置在F-Queue队列中，并且之后由一个Finalizer线程去执行触发对象的finalize()方法，但并不会承诺等待这个方法运行结束。这是对象被GC前的最后一次逃脱机会，稍后GC会对F-Queue中的对象进行第二次的小规模标记，这时候的对象如果还没有逃脱那就被GC回收了。<br>&emsp;&emsp;对于开发者而言，尽量可以忘却这个方法，因为JAVA不像C++和C，他无法保证finalize()一定会执行。</p>
+<h4 id="四、知识小补给"><a href="#四、知识小补给" class="headerlink" title="四、知识小补给"></a>四、知识小补给</h4><p>我们经常会提到对象的引用，在JAVA中定义了四类引用的类型:<br>&emsp;&emsp;1. 强引用:在程序中普遍存在的元素，比如new关键字创建的对象，只要强引用还在，GC回收器永远不会回收这部分的对象。<br>&emsp;&emsp;2. 软引用:描述一些还有用但是非必须的对象。在系统发生内存溢出异常之前，将会把这些对象列进回收范围之中进行第二次的回收，如果经过这次回收内存还是不够才会抛出内存溢出的异常。<br>&emsp;&emsp;3. 弱引用:用来描述非必须对象，强度比软引用还要弱一点。被弱引用关联的对象只能生活到下一次垃圾回收发生之前。当GC收集器工作的时候，无论当前的内存是否足够都会回收掉弱引用的对象。<br>&emsp;&emsp;4. 虚引用:它是引用关系中最弱的一种关系。一个对象是否是虚引用的存在，完全不会对其生存的时间构成影响，也无法通过虚引用来取得一个对象的实例。</p>
+<h4 id="五、回想"><a href="#五、回想" class="headerlink" title="五、回想"></a>五、回想</h4><p>&emsp;&emsp;JVM对象生死机制是学习GC回收原理的前提，只用判断出哪些对象需要被回收哪些对象是程序需要的，接下来才能对程序进行垃圾回收。JVM使用的是可达性分析法来确定哪些对象是活跃的被引用的，而将其他对象都通过GC进行回收掉。<br><br></p>
 <hr>
 <p>&emsp;&emsp;<strong>不管岁月里经历多少辛酸和艰难，告诉自己风雨本身就是一种内涵，努力的面对，不过就是一场命运的漂流，既然在路上，那么目的地必然也就是前方。</strong></p>
 <hr>
@@ -468,7 +396,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Redis/" rel="tag"><i class="fa fa-tag"></i> Redis</a>
+            <a href="/tags/JVM/" rel="tag"><i class="fa fa-tag"></i> JVM</a>
           
         </div>
       
@@ -481,14 +409,18 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2018/08/14/Redis内存存储之一、初识Redis/" rel="next" title="Redis内存存储之一、初识Redis">
+                <i class="fa fa-chevron-left"></i> Redis内存存储之一、初识Redis
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/08/21/JVM内存小秘密/" rel="prev" title="JVM 对象生死">
-                JVM 对象生死 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/08/24/了解RocketMq/" rel="prev" title="了解RocketMq">
+                了解RocketMq <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -622,7 +554,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#一、简介"><span class="nav-number">1.</span> <span class="nav-text">一、简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二、数据库对比"><span class="nav-number">2.</span> <span class="nav-text">二、数据库对比</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#三、Redis数据结构"><span class="nav-number">3.</span> <span class="nav-text">三、Redis数据结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#四、持久化"><span class="nav-number">4.</span> <span class="nav-text">四、持久化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#五、复制"><span class="nav-number">5.</span> <span class="nav-text">五、复制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#六、事务"><span class="nav-number">6.</span> <span class="nav-text">六、事务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#七、集群"><span class="nav-number">7.</span> <span class="nav-text">七、集群</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#八、总结"><span class="nav-number">8.</span> <span class="nav-text">八、总结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#一、前言"><span class="nav-number">1.</span> <span class="nav-text">一、前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二、对象的死亡"><span class="nav-number">2.</span> <span class="nav-text">二、对象的死亡</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#三、对象的生存"><span class="nav-number">3.</span> <span class="nav-text">三、对象的生存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#四、知识小补给"><span class="nav-number">4.</span> <span class="nav-text">四、知识小补给</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#五、回想"><span class="nav-number">5.</span> <span class="nav-text">五、回想</span></a></li></ol></div>
             
 
           </div>
