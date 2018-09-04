@@ -95,7 +95,7 @@
 <meta property="og:image" content="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-31/23559955.jpg">
 <meta property="og:image" content="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-31/26985381.jpg">
 <meta property="og:image" content="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-31/56082969.jpg">
-<meta property="og:updated_time" content="2018-09-04T08:43:23.356Z">
+<meta property="og:updated_time" content="2018-09-04T09:08:07.458Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="调试RocketMq准备">
 <meta name="twitter:description" content="一、准备动作可以参考RocketMq官网，这边以RocketMq4.2为例子讲解。首先有两种方式获取Rocketmq源码:  使用git clone的方式，clone不能直接clone某个分支，必定会把所有的东西clone到本地(git clone git@github.com:apache/rocketmq.git)，然后通过check out命令找到4.2的分支导入到本地。 通过下载zip的包">
@@ -355,7 +355,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  646
+                  725
                 </span>
               
 
@@ -371,7 +371,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  2
+                  3
                 </span>
               
             </div>
@@ -398,7 +398,8 @@
 <li>通过下载zip的包，下载zip能直接下载对应的分支的压缩包，下载完解压，导入到对应的开发工具即可(这边以idea为例子)。</li>
 </ul>
 <p>源码下载好以后，通过maven进行一次打包。根据Apache RocketMq官方的文档，需要启动两个东西一个是mqnamesrv，一个是mqbroker。下面是官方文档打包命令:<br><img src="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-31/62741087.jpg" alt="">启动mqnamesrv的命令:<br><img src="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-31/98280502.jpg" alt="">启动broker命令:<br><img src="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-31/47762408.jpg" alt="">可以通过jps或者ps -ef|grep rocketmq命令查看是否已经启动了RocketMq，如果输入jps命令后出现NameSrvStartup这样的标志就代表成功了，broker同理。</p>
-<h4 id="二、通过本地代码运行"><a href="#二、通过本地代码运行" class="headerlink" title="二、通过本地代码运行"></a>二、通过本地代码运行</h4><p>上面是通过命令行启动RocketMq，一共需要两步。接下来从本地代码层启动RocketMq这样就可以方便调试查看源码了。首先看看mqnamesrv命令和mqbroker命令做了些啥:<br>mqnamesrv命令:<br><img src="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-31/45133269.jpg" alt=""><br>mqbroker命令:<img src="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-31/86635023.jpg" alt="">上面的东西看起来很头疼，但是多多少少能看得出一些东西，比如mqnamesrv中启动类就是NameSrvStartup，broker启动类是BrokerStartup。了解了这些就可以去源码中找这两个类NameSrvStartup在namesrv模块下，BrokerStartup启动类在broker模块下。你会发现那两个类都是有main方法入口的，通过main方法执行就能启动对应的NameSrv和Broker。当然一开始我也是这样想的，运行的时候会发现控制台打印了这句话:<br><img src="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-31/23559955.jpg" alt="">从程序中可以看出是namesrvConfig中获取不到RocketMqHome路径，接下来你可以看一下是否配置了RocketMqHome的路径或者创建了软连接，如果没有的话直接在源码中设置RockeMqHome的路径比如我的就是(/usr/git/rocketmq/distribution)，Broker设置的和NameSrv一样这边贴出一下加完代码的片段:<br>NameSrvStartup代码片段:<br><img src="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-31/26985381.jpg" alt="">BrokerStartup代码片段:<br><img src="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-31/56082969.jpg" alt="">有了以上的配置以后再运行刚刚的那两个类就OK了当然顺序也要注意先运行NameSrvStartup再运行BrokerStartup<br><br></p>
+<h4 id="二、通过本地代码运行"><a href="#二、通过本地代码运行" class="headerlink" title="二、通过本地代码运行"></a>二、通过本地代码运行</h4><p>&emsp;&emsp;上面是通过命令行启动RocketMq，一共需要两步。接下来从本地代码层启动RocketMq这样就可以方便调试查看源码了。首先看看mqnamesrv命令和mqbroker命令做了些啥:<br>mqnamesrv命令:<br><img src="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-31/45133269.jpg" alt=""><br>mqbroker命令:<img src="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-31/86635023.jpg" alt="">上面的东西看起来很头疼，但是多多少少能看得出一些东西，比如mqnamesrv中启动类就是NameSrvStartup，broker启动类是BrokerStartup。了解了这些就可以去源码中找这两个类NameSrvStartup在namesrv模块下，BrokerStartup启动类在broker模块下。你会发现那两个类都是有main方法入口的，通过main方法执行就能启动对应的NameSrv和Broker。当然一开始我也是这样想的，运行的时候会发现控制台打印了这句话:<br><img src="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-31/23559955.jpg" alt="">从程序中可以看出是namesrvConfig中获取不到RocketMqHome路径，接下来你可以看一下是否配置了RocketMqHome的路径或者创建了软连接，如果没有的话直接在源码中设置RockeMqHome的路径比如我的就是(/usr/git/rocketmq/distribution)，Broker设置的和NameSrv一样这边贴出一下加完代码的片段:<br>NameSrvStartup代码片段:<br><img src="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-31/26985381.jpg" alt="">BrokerStartup代码片段:<br><img src="http://imagofblog.oss-cn-beijing.aliyuncs.com/18-8-31/56082969.jpg" alt="">有了以上的配置以后再运行刚刚的那两个类就OK了当然顺序也要注意先运行NameSrvStartup再运行BrokerStartup</p>
+<h4 id="三、总结"><a href="#三、总结" class="headerlink" title="三、总结"></a>三、总结</h4><p>&emsp;&emsp;上面提到的只是可以启动默认的NamesrvStartup类和BrokerStartup类，如果自己需要测试或者调式集群环境下的代码，可以指定需要读取的配置文件，当热这部分在学习了解注册中心源码的时候提出来会更好。<br><br><br></p>
 <hr>
 <p>&emsp;&emsp;<strong>不管岁月里经历多少辛酸和艰难，告诉自己风雨本身就是一种内涵，努力的面对，不过就是一场命运的漂流，既然在路上，那么目的地必然也就是前方。</strong></p>
 <hr>
@@ -582,7 +583,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#一、准备动作"><span class="nav-number">1.</span> <span class="nav-text">一、准备动作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二、通过本地代码运行"><span class="nav-number">2.</span> <span class="nav-text">二、通过本地代码运行</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#一、准备动作"><span class="nav-number">1.</span> <span class="nav-text">一、准备动作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二、通过本地代码运行"><span class="nav-number">2.</span> <span class="nav-text">二、通过本地代码运行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#三、总结"><span class="nav-number">3.</span> <span class="nav-text">三、总结</span></a></li></ol></div>
             
 
           </div>
@@ -633,7 +634,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共6.1k字</span>
+  <span class="post-count">博客全站共6.2k字</span>
 </div>
         
 
